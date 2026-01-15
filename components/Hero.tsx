@@ -71,7 +71,7 @@ export default function Hero() {
           <div className="relative">
             <div className="bg-yellow-400 rounded-[40px] p-8 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
               <Image
-                src="/hero-products.png"
+                src="/look.jpg"
                 alt="Produits Comon-siz"
                 width={600}
                 height={600}
