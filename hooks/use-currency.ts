@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { getActiveExchangeRate, getExchangeRateWithFallback } from '@/lib/currency'
+import { getExchangeRateWithFallback, DEFAULT_EXCHANGE_RATE } from '@/lib/currency'
 import type { Currency, ExchangeRateData } from '@/types/currency'
 
 const CURRENCY_STORAGE_KEY = 'preferred_currency'
@@ -40,27 +40,13 @@ export function useCurrency(): UseCurrencyReturn {
     refetch
   } = useQuery({
     queryKey: ['exchange-rate'],
-    queryFn: async () => {
-      const rateData = await getActiveExchangeRate()
-      if (!rateData) {
-        const fallbackRate = await getExchangeRateWithFallback()
-        return {
-          id: 'fallback',
-          rate: fallbackRate,
-          source: 'FALLBACK' as const,
-          is_active: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }
-      }
-      return rateData
-    },
+    queryFn: getExchangeRateWithFallback, // ✅ Simplifié - retourne déjà ExchangeRateData
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 30, // 30 minutes
     retry: 1,
   })
 
-  const exchangeRate = exchangeRateData?.rate || 2800
+  const exchangeRate = exchangeRateData?.rate || DEFAULT_EXCHANGE_RATE
 
   const setCurrency = useCallback((newCurrency: Currency) => {
     setCurrencyState(newCurrency)

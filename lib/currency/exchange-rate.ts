@@ -8,6 +8,12 @@ import { supabase } from '@/lib/supabase/client'
 import type { ExchangeRate, ExchangeRateData } from '@/types/currency'
 
 /**
+ * Taux de change par défaut si aucun taux n'est configuré
+ * Utilisé comme fallback pour ne pas bloquer l'application
+ */
+export const DEFAULT_EXCHANGE_RATE = 2300
+
+/**
  * Récupère le taux de change actif depuis Supabase
  * @returns Le taux de change actuel ou null si aucun taux actif
  * 
@@ -41,12 +47,53 @@ export async function getActiveExchangeRate(): Promise<ExchangeRateData | null> 
 
     return {
       rate: data.rate,
-      lastUpdated: new Date(data.updated_at)
+      lastUpdated: new Date(data.updated_at),
+      source: 'DATABASE'
     }
   } catch (error) {
     console.error('Erreur inattendue:', error)
     return null
   }
+}
+
+/**
+ * Récupère le taux de change avec fallback
+ * Garantit toujours un taux (retourne ExchangeRateData)
+ * 
+ * @returns Le taux de change avec métadonnées
+ * 
+ * @example
+ * const rateData = await getExchangeRateWithFallback()
+ * console.log(`Taux: ${rateData.rate}, Source: ${rateData.source}`)
+ */
+export async function getExchangeRateWithFallback(): Promise<ExchangeRateData> {
+  const rateData = await getActiveExchangeRate()
+  
+  if (!rateData) {
+    console.warn(
+      `Aucun taux actif trouvé. Utilisation du taux par défaut: ${DEFAULT_EXCHANGE_RATE}`
+    )
+    return {
+      rate: DEFAULT_EXCHANGE_RATE,
+      lastUpdated: new Date(),
+      source: 'FALLBACK'
+    }
+  }
+
+  return rateData
+}
+
+/**
+ * Récupère uniquement le taux numérique (pour compatibilité)
+ * @returns Le taux de change (toujours un nombre)
+ * 
+ * @example
+ * const rate = await getExchangeRateValue()
+ * const priceInFC = priceInUSD * rate
+ */
+export async function getExchangeRateValue(): Promise<number> {
+  const rateData = await getExchangeRateWithFallback()
+  return rateData.rate
 }
 
 /**
@@ -137,33 +184,4 @@ export async function createExchangeRate(
     console.error('Erreur inattendue:', error)
     return null
   }
-}
-
-/**
- * Taux de change par défaut si aucun taux n'est configuré
- * Utilisé comme fallback pour ne pas bloquer l'application
- */
-export const DEFAULT_EXCHANGE_RATE = 2300
-
-/**
- * Récupère le taux de change avec fallback
- * Garantit toujours un taux (utilise DEFAULT_EXCHANGE_RATE si besoin)
- * 
- * @returns Le taux de change (toujours un nombre)
- * 
- * @example
- * const rate = await getExchangeRateWithFallback()
- * // Retourne toujours un nombre, même si la DB est inaccessible
- */
-export async function getExchangeRateWithFallback(): Promise<number> {
-  const rateData = await getActiveExchangeRate()
-  
-  if (!rateData) {
-    console.warn(
-      `Aucun taux actif trouvé. Utilisation du taux par défaut: ${DEFAULT_EXCHANGE_RATE}`
-    )
-    return DEFAULT_EXCHANGE_RATE
-  }
-
-  return rateData.rate
 }

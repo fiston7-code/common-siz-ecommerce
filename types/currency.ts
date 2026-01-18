@@ -28,8 +28,9 @@ export interface ExchangeRate {
  * Structure simplifiée du taux pour l'utilisation dans l'app
  */
 export interface ExchangeRateData {
-  rate: number          // Ex: 2800
-  lastUpdated: Date     // Date de dernière mise à jour
+  rate: number
+  lastUpdated: Date
+  source?: 'DATABASE' | 'FALLBACK'
 }
 
 /**
