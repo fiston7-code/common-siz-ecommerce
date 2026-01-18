@@ -8,7 +8,8 @@
 
 import { ProductCard } from './product-card'
 import { Loader2, Package } from 'lucide-react'
-import type { Product, Currency } from '@/types'
+import type { Product } from '@/types/product'
+import  type {Currency} from "@/types/currency"
 
 interface ProductGridProps {
   products: Product[]
