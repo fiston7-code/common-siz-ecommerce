@@ -337,7 +337,7 @@ export default function PremiumNavbar() {
 }
 
 // Composant NavLink pour navigation desktop
-function NavLink({ href, label }) {
+function NavLink({ href, label }: { href: string; label: string }) {
   return (
     <motion.a
       href={href}
