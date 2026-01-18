@@ -81,7 +81,7 @@ export default async function ProductsPage({
   }
 
   const exchangeRate = await getExchangeRateWithFallback()
-  const products = enrichProducts((productsDB as ProductDB[]) || [], exchangeRate)
+  const products = enrichProducts((productsDB as ProductDB[]) || [], exchangeRate.rate)
   const totalPages = Math.ceil((count || 0) / PRODUCTS_PER_PAGE)
 
   return (
@@ -92,7 +92,7 @@ export default async function ProductsPage({
         currentPage={page}
         totalPages={totalPages}
         totalProducts={count || 0}
-        exchangeRate={exchangeRate}
+        exchangeRate={exchangeRate.rate}
         initialFilters={{
           categoryId,
           searchQuery,
