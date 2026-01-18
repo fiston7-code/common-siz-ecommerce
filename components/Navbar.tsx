@@ -5,6 +5,14 @@ import { ShoppingCart, Heart, User, Menu, X, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 
+
+
+
+interface NavLinkProps {
+  href: string
+  label: string
+}
+
 export default function PremiumNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
@@ -337,7 +345,25 @@ export default function PremiumNavbar() {
 }
 
 // Composant NavLink pour navigation desktop
-function NavLink({ href, label }: { href: string; label: string }) {
+// function NavLink({ href, label }) {
+//   return (
+//     <motion.a
+//       href={href}
+//       className="relative text-gray-700 font-medium hover:text-blue-900 transition-colors py-2"
+//       whileHover={{ y: -1 }}
+//     >
+//       {label}
+//       <motion.div
+//         className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-900"
+//         initial={{ scaleX: 0 }}
+//         whileHover={{ scaleX: 1 }}
+//         transition={{ duration: 0.3 }}
+//       />
+//     </motion.a>
+//   );
+// }
+
+function NavLink({ href, label }: NavLinkProps) {
   return (
     <motion.a
       href={href}
@@ -352,5 +378,5 @@ function NavLink({ href, label }: { href: string; label: string }) {
         transition={{ duration: 0.3 }}
       />
     </motion.a>
-  );
+  )
 }
