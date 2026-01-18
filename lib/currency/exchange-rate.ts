@@ -143,7 +143,7 @@ export async function createExchangeRate(
  * Taux de change par défaut si aucun taux n'est configuré
  * Utilisé comme fallback pour ne pas bloquer l'application
  */
-export const DEFAULT_EXCHANGE_RATE = 2800
+export const DEFAULT_EXCHANGE_RATE = 2300
 
 /**
  * Récupère le taux de change avec fallback

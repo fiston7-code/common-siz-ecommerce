@@ -21,11 +21,11 @@ export default function PremiumNavbar() {
 
   // Messages barre d'annonce
   const announcements = [
-    "✨ Livraison offerte dès 150$ d'achat",
-    "🎁 Nouvelle collection Printemps 2026 disponible",
-    "💎 Produits artisanaux d'exception - Made in France",
-    "🌍 Expédition dans toute l'Europe sous 48h",
-    "🔥 -20% sur une sélection - Code: SPRING20"
+  "✨ Livraison OFFERTE dès 100$ d'achat à Gombe, Limete et Bandal",
+  "🚚 Livraison express en 24h dans toutes les communes de Kinshasa",
+  "📱 Suivez votre commande en direct sur WhatsApp (+243 993769146)",
+  "🤝 Paiement à la livraison : Payez seulement après avoir vérifié le colis",
+  "🔥 Promo Flash : -10% sur les Tablettes jusqu'à la fin de la semaine"
   ];
 
   // Rotation automatique des annonces

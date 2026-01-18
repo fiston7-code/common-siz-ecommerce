@@ -6,6 +6,23 @@
 
 import type { Currency, PriceDisplay } from './currency'
 
+
+
+/**
+ * Structure d'une catégorie de produits
+ */
+export interface Category {
+  id: string
+  name: string
+  slug: string
+  description?: string
+  created_at?: string
+  updated_at?: string
+}
+
+
+
+
 /**
  * Catégories de produits disponibles
  * DOIT correspondre exactement au CHECK constraint dans Supabase
@@ -28,7 +45,7 @@ export interface ProductDB {
   price: number                       // Prix en FC centimes (ex: 2800000 = 28 000 FC)
   category: ProductCategory           // Catégorie du produit
   brand: string | null                // Marque (ex: "Apple", "Samsung")
-  specifications: Record<string, any> | null // JSON avec specs techniques
+  specifications: Record<string, unknown> | null // JSON avec specs techniques
   image_url: string | null            // URL de l'image
   stock_quantity: number              // Quantité en stock
   stock_threshold: number             // Seuil d'alerte stock faible (par défaut 5)
@@ -109,7 +126,7 @@ export interface CreateProductInput {
   price: number                       // Prix en FC centimes
   category: ProductCategory
   brand?: string
-  specifications?: Record<string, any>
+  specifications?: Record<string, unknown> 
   image_url?: string
   stock_quantity: number
   stock_threshold?: number

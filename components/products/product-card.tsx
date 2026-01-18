@@ -10,7 +10,8 @@ import { ShoppingCart, Eye, Heart, AlertCircle } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/currency'
-import type { Product, Currency } from '@/types/product'
+import type { Product } from '@/types/product'
+import type { Currency } from '@/types/currency'
 
 interface ProductCardProps {
   product: Product
@@ -70,7 +71,7 @@ export function ProductCard({
               <div className="w-16 h-16 mx-auto mb-2 bg-gray-200 rounded-full flex items-center justify-center">
                 <Eye className="w-8 h-8" />
               </div>
-              <p className="text-sm">Pas d'image</p>
+              <p className="text-sm">Pas d&apos;image</p>
             </div>
           </div>
         )}
