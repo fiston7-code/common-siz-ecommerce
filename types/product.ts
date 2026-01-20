@@ -42,7 +42,8 @@ export interface ProductDB {
   id: string                          // UUID du produit
   name: string                        // Nom du produit (ex: "iPhone 15 Pro")
   description: string | null          // Description (peut être null)
-  price: number                       // Prix en FC centimes (ex: 2800000 = 28 000 FC)
+  price: number // Prix en FC centimes (ex: 2800000 = 28 000 FC)
+  price_usd: number                        
   category: ProductCategory           // Catégorie du produit
   brand: string | null                // Marque (ex: "Apple", "Samsung")
   specifications: Record<string, unknown> | null // JSON avec specs techniques
