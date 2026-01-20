@@ -75,8 +75,6 @@ export function ProductGrid({
           key={product.id}
           product={product}
           currency={currency}
-          onAddToCart={onAddToCart}
-          onAddToWishlist={onAddToWishlist}
         />
       ))}
     </div>
