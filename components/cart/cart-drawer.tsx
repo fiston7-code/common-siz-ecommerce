@@ -227,7 +227,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 {/* Info supplémentaire */}
                 <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                   <p className="text-xs text-blue-900 text-center">
-                    🚚 Livraison GRATUITE dès 100$ d'achat à Gombe, Limete et Bandal
+                    🚚 Livraison GRATUITE dès 100$ d&apos;achat à Gombe, Limete et Bandal
                   </p>
                 </div>
               </div>

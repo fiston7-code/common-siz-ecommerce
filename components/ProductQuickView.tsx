@@ -33,12 +33,15 @@ export default function ProductQuickView({
     setIsAdding(true)
 
     addItem({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image_url,
-      quantity,
-    })
+    
+  id: product.id,
+  name: product.name,
+  price: product.price,
+  price_usd: product.price_usd,
+  image: product.image_url ?? undefined, // 👈 Convertit null en undefined
+  
+})
+
 
     setIsAdding(false)
     setShowSuccess(true)
