@@ -50,7 +50,8 @@ export default async function ProductsPage({
     .order(sortBy, { ascending: sortOrder === 'asc' })
 
   if (categoryId) {
-    query = query.eq('category_id', categoryId)
+    query = query.eq('category', categoryId)
+
   }
   
   // 🔥 Recherche full-text (plus rapide que ILIKE)
