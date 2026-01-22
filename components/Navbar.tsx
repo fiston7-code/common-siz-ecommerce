@@ -105,7 +105,7 @@ export default function PremiumNavbar() {
                     width={200}
                     height={48}
                     className="h-full w-auto"
-                    priority
+                    preload={true}
                   />
                 </motion.div>
               </Link>

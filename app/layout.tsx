@@ -22,7 +22,8 @@ export default function RootLayout({
         {/* Wrap toute l'app avec le QueryProvider */}
         <QueryProvider>
           <Navbar/>
-          {children}
+          <main>{children}</main>
+         
         </QueryProvider>
       </body>
     </html>
