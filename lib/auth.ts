@@ -37,8 +37,8 @@ export function verifyToken(token: string): AdminPayload | null {
     const decoded = jwt.verify(token, secret) as AdminPayload;
     console.log('✅ Token valid:', decoded.email, decoded.role);
     return decoded;
-  } catch (error: any) {
-    console.error('❌ Token verification failed:', error.message);
+  } catch (error: unknown) {
+    console.error('❌ Token verification failed:', error);
     return null;
   }
 }

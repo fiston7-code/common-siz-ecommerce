@@ -5,7 +5,7 @@ import { verifyToken } from '@/lib/auth';
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Autoriser /admin/login
+  // ✅ Autoriser /admin/login (pas /auth/login)
   if (pathname === '/admin/login') {
     return NextResponse.next();
   }
