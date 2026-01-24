@@ -8,6 +8,22 @@ export interface AdminPayload {
   name: string;
 }
 
+
+// ✅ Créer un payload propre (sans exp, iat, etc.)
+export function createCleanPayload(data: {
+  id: string;
+  email: string;
+  role: 'super_admin' | 'admin';
+  name: string;
+}): AdminPayload {
+  return {
+    id: data.id,
+    email: data.email,
+    role: data.role,
+    name: data.name,
+  };
+}
+
 // Récupérer le secret avec fallback
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
@@ -21,10 +37,20 @@ function getJwtSecret(): string {
   return secret;
 }
 
+// // Générer un token JWT
+// export function generateToken(payload: AdminPayload): string {
+//   const secret = getJwtSecret();
+//   const token = jwt.sign(payload, secret, { expiresIn: '7d' });
+//   console.log('🎫 Token generated (length:', token.length, ')');
+//   return token;
+// }
+
 // Générer un token JWT
 export function generateToken(payload: AdminPayload): string {
   const secret = getJwtSecret();
-  const token = jwt.sign(payload, secret, { expiresIn: '7d' });
+  // ✅ Nettoyer le payload avant de signer
+  const cleanPayload = createCleanPayload(payload);
+  const token = jwt.sign(cleanPayload, secret, { expiresIn: '7d' });
   console.log('🎫 Token generated (length:', token.length, ')');
   return token;
 }
