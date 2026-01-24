@@ -50,14 +50,6 @@ export default function PremiumNavbar() {
     return () => clearInterval(interval)
   }, [announcements.length])
 
-  // Catégories pour mega-menu
-  const categories = [
-    { name: "Mode & Accessoires", icon: "👔", items: ["Vêtements", "Chaussures", "Sacs"] },
-    { name: "Maison & Déco", icon: "🏠", items: ["Meubles", "Luminaires", "Textile"] },
-    { name: "Art & Collection", icon: "🎨", items: ["Tableaux", "Sculptures", "Artisanat"] },
-    { name: "Bijoux", icon: "💎", items: ["Colliers", "Bracelets", "Bagues"] }
-  ]
-
   return (
     <>
       <div className="sticky top-0 z-50">
@@ -144,30 +136,7 @@ export default function PremiumNavbar() {
                       >
                         <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-8">
                           <div className="grid grid-cols-4 gap-6">
-                            {categories.map((cat, idx) => (
-                              <motion.div
-                                key={cat.name}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: idx * 0.05 }}
-                                className="space-y-3"
-                              >
-                                <div className="text-3xl mb-2">{cat.icon}</div>
-                                <h3 className="font-bold text-blue-900">{cat.name}</h3>
-                                <ul className="space-y-2">
-                                  {cat.items.map((item) => (
-                                    <li key={item}>
-                                      <Link
-                                        href={`/products?category=${cat.name}`}
-                                        className="text-sm text-gray-600 hover:text-blue-900 transition-colors block"
-                                      >
-                                        {item}
-                                      </Link>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </motion.div>
-                            ))}
+                    
                           </div>
                         </div>
                       </motion.div>

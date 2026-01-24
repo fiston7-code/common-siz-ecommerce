@@ -1,4 +1,3 @@
-// app/checkout/page.tsx
 'use client'
 
 import { useState } from 'react'
@@ -6,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCartStore } from '@/store/cart-store'
-// import { useCurrencyStore } from '@/lib/store/currencyStore'
 import { supabase } from '@/lib/supabase/client'
 import { checkoutSchema, CheckoutFormData, KINSHASA_COMMUNES } from '@/lib/validations/checkout'
 import { Button } from '@/components/ui/button'
@@ -29,15 +27,26 @@ import {
 } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Loader2 } from 'lucide-react'
+import { formatPrice } from '@/lib/currency'
+import type { Product } from '@/types/product'
+import type { Currency } from '@/types/currency'
 
-const DELIVERY_FEE_FC = 7000
 
-export default function CheckoutPage() {
+interface ProductCardProps {
+  product: Product
+  currency: Currency
+  
+}
+
+const DELIVERY_FEE_FC = 700000 // 7000,00 FC en centimes
+
+export default function CheckoutPage( {product,
+  currency,
+}: ProductCardProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  
+
   const { items, getTotalPriceFC, clearCart } = useCartStore()
-//   const { currency } = useCurrencyStore()
 
   const form = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
@@ -72,147 +81,77 @@ export default function CheckoutPage() {
   const subtotal = getTotalPriceFC()
   const total = subtotal + DELIVERY_FEE_FC
 
-//   const onSubmit = async (data: CheckoutFormData) => {
-//     setIsSubmitting(true)
+  const onSubmit = async (data: CheckoutFormData) => {
+    setIsSubmitting(true)
 
-//     try {
-//       // 1. Créer la commande
-//       const { data: order, error: orderError } = await supabase
-//         .from('orders')
-//         .insert({
-//           customer_name: data.name,
-//           customer_phone: data.phone,
-//           customer_whatsapp: data.whatsapp || null,
-//           customer_email: data.email || null,
-//           delivery_commune: data.commune,
-//           delivery_quartier: data.quartier,
-//           delivery_avenue: data.avenue,
-//           delivery_reference: data.reference_point || null,
-//           delivery_instructions: data.delivery_instructions || null,
-//           subtotal: subtotal,
-//           shipping_cost: DELIVERY_FEE_FC,
-//           total: total,
-//           final_total: total,
-//           status: 'pending',
-//           payment_method: 'cash_on_delivery',
-//         })
-//         .select()
-//         .single()
+    try {
+      console.log('📝 Données du formulaire:', data)
+      console.log('🛒 Articles du panier:', items)
 
-//       if (orderError) throw orderError
+      // 1. Créer la commande
+      const { data: order, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          customer_name: data.name,
+          customer_phone: data.phone,
+          customer_whatsapp: data.whatsapp || null,
+          customer_email: data.email || null,
+          delivery_commune: data.commune,
+          delivery_quartier: data.quartier,
+          delivery_avenue: data.avenue,
+          delivery_reference: data.reference_point || null,
+          delivery_instructions: data.delivery_instructions || null,
+          subtotal: subtotal,
+          shipping_cost: DELIVERY_FEE_FC,
+          total: total,
+          final_total: total,
+          status: 'pending',
+          payment_method: 'cash_on_delivery',
+        })
+        .select()
+        .single()
 
-//       // 2. Créer les order_items
-//       const orderItems = items.map((item) => ({
-//         order_id: order.id,
-//         product_id: item.id,
-//         product_name: item.name,
-//         product_image_url: item.image || null,
-//         quantity: item.quantity,
-//         unit_price: item.price,
-//         total_price: item.price * item.quantity,
-//       }))
+      console.log('📦 Résultat insertion order:', { order, orderError })
 
-//       const { error: itemsError } = await supabase
-//         .from('order_items')
-//         .insert(orderItems)
+      if (orderError) {
+        console.error('❌ Erreur order:', orderError)
+        throw orderError
+      }
 
-//       if (itemsError) throw itemsError
+      // 2. Créer les order_items
+      const orderItems = items.map((item) => ({
+        order_id: order.id,
+        product_id: item.id,
+        product_name: item.name,
+        product_image_url: item.image || null,
+        quantity: item.quantity,
+        unit_price: item.price,
+        total_price: item.price * item.quantity,
+      }))
 
-//       // 3. Vider le panier
-//       clearCart()
+      console.log('📋 Order items à insérer:', orderItems)
 
-//       // 4. Rediriger vers la page de confirmation
-//       router.push(`/order-confirmation/${order.order_number}`)
-//     } catch (error) {
-//       console.error('Erreur lors de la création de la commande:', error)
-//       alert('Une erreur est survenue. Veuillez réessayer.')
-//     } finally {
-//       setIsSubmitting(false)
-//     }
-//   }
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(orderItems)
 
+      if (itemsError) {
+        console.error('❌ Erreur items:', itemsError)
+        throw itemsError
+      }
 
+      // 3. Vider le panier
+      clearCart()
 
-const onSubmit = async (data: CheckoutFormData) => {
-  setIsSubmitting(true)
-
-  try {
-    console.log('📝 Données du formulaire:', data)
-    console.log('🛒 Articles du panier:', items)
-    
-    // 1. Créer la commande
-    const { data: order, error: orderError } = await supabase
-      .from('orders')
-      .insert({
-        customer_name: data.name,
-        customer_phone: data.phone,
-        customer_whatsapp: data.whatsapp || null,
-        customer_email: data.email || null,
-        delivery_commune: data.commune,
-        delivery_quartier: data.quartier,
-        delivery_avenue: data.avenue,
-        delivery_reference: data.reference_point || null,
-        delivery_instructions: data.delivery_instructions || null,
-        subtotal: subtotal,
-        shipping_cost: DELIVERY_FEE_FC,
-        total: total,
-        final_total: total,
-        status: 'pending',
-        payment_method: 'cash_on_delivery',
-      })
-      .select()
-      .single()
-
-  console.log('📦 Résultat insertion order:', { order, orderError })
-console.log('📦 orderError stringifié:', JSON.stringify(orderError, null, 2))
-
-if (orderError) {
-  console.error('❌ Erreur order:', orderError)
-  console.error('❌ Code:', orderError.code)
-  console.error('❌ Message:', orderError.message)
-  console.error('❌ Details:', orderError.details)
-  console.error('❌ Hint:', orderError.hint)
-  throw orderError
-}
-
-    // 2. Créer les order_items
-    const orderItems = items.map((item) => ({
-      order_id: order.id,
-      product_id: item.id,
-      product_name: item.name,
-      product_image_url: item.image || null,
-      quantity: item.quantity,
-      unit_price: item.price,
-      total_price: item.price * item.quantity,
-    }))
-
-    console.log('📋 Order items à insérer:', orderItems)
-
-    const { error: itemsError } = await supabase
-      .from('order_items')
-      .insert(orderItems)
-
-    console.log('📦 Résultat insertion items:', { itemsError })
-
-    if (itemsError) {
-      console.error('❌ Erreur items:', itemsError)
-      throw itemsError
+      // 4. Rediriger vers la page de confirmation
+      router.push(`/order-confirmation/${order.order_number}`)
+    } catch (error) {
+      console.error('❌ Erreur complète:', error)
+      alert('Une erreur est survenue. Veuillez réessayer.')
+    } finally {
+      setIsSubmitting(false)
     }
-
-    // 3. Vider le panier
-    clearCart()
-
-    // 4. Rediriger vers la page de confirmation
-    router.push(`/order-confirmation/${order.order_number}`)
-  } catch (error) {
-    console.error('❌ Erreur complète:', error)
-    console.error('❌ Type d\'erreur:', typeof error)
-    console.error('❌ Message:', error instanceof Error ? error.message : 'Unknown')
-    alert('Une erreur est survenue. Veuillez réessayer.')
-  } finally {
-    setIsSubmitting(false)
   }
-}
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -414,9 +353,18 @@ if (orderError) {
                     <span className="text-muted-foreground">
                       {item.name} × {item.quantity}
                     </span>
-                    <span className="font-medium">
-                      {(item.price * item.quantity).toLocaleString()} FC
+                    <div className='flex flex-col gap-1  text-gray-500"'>
+                      <span className="font-medium">
+                        {formatPrice(item.price * item.quantity, 'FC')}
                     </span>
+                    
+                    <span className=' text-gray-500"'>
+                      {currency === 'FC' 
+                        ? `≈ ${formatPrice(item.price * item.quantity, 'FC')}`
+                        : `≈ ${formatPrice((item.price_usd || 0) * item.quantity, 'USD')}`}
+                      
+                    </span>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -424,18 +372,28 @@ if (orderError) {
               <div className="border-t pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Sous-total</span>
-                  <span>{subtotal.toLocaleString()} FC</span>
+                  <span>   
+                {formatPrice(subtotal, 'FC')}
+
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Livraison</span>
-                  <span>{DELIVERY_FEE_FC.toLocaleString()} FC</span>
+                  <span>   
+                  {formatPrice(DELIVERY_FEE_FC, 'FC')}
+                  
+                  </span>
                 </div>
               </div>
 
               <div className="border-t pt-4">
                 <div className="flex justify-between font-bold text-lg">
                   <span>Total</span>
-                  <span>{total.toLocaleString()} FC</span>
+                  <span>
+                    {formatPrice(total, 'FC')}
+                    
+                  </span>
+                  
                 </div>
               </div>
 
