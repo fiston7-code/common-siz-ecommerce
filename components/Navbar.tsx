@@ -143,9 +143,7 @@ export default function PremiumNavbar() {
                     )}
                   </AnimatePresence>
                 </div>
-
-                <NavLink href="/about" label="À propos" />
-                <NavLink href="/contact" label="Contact" />
+            
               </div>
 
               {/* Actions */}
@@ -161,7 +159,7 @@ export default function PremiumNavbar() {
                     className="p-2 hover:bg-gray-50 rounded-full transition-colors"
                     aria-label="Mon compte"
                   >
-                    <User className="w-6 h-6 text-gray-700" />
+                    {/* <User className="w-6 h-6 text-gray-700" /> */}
                   </motion.button>
 
                   <AnimatePresence>
@@ -258,10 +256,10 @@ export default function PremiumNavbar() {
                     {[
                       { href: "/", label: "Accueil" },
                       { href: "/products", label: "Produits" },
-                      { href: "/about", label: "À propos" },
-                      { href: "/contact", label: "Contact" },
-                      { href: "/account", label: "Mon compte" },
-                      { href: "/wishlist", label: "Ma wishlist" }
+                      // { href: "/about", label: "À propos" },
+                      // { href: "/contact", label: "Contact" },
+                      // { href: "/account", label: "Mon compte" },
+                      // { href: "/wishlist", label: "Ma wishlist" }
                     ].map((link) => (
                       <motion.div
                         key={link.href}

@@ -48,15 +48,7 @@ export default function Footer() {
               >
                 <Instagram className="w-5 h-5" />
               </a>
-              <a 
-                href="https://twitter.com" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-blue-800 hover:bg-yellow-400 hover:text-blue-900 rounded-full flex items-center justify-center transition-all"
-                aria-label="Twitter"
-              >
-                <Twitter className="w-5 h-5" />
-              </a>
+             
             </div>
           </div>
 
@@ -67,9 +59,7 @@ export default function Footer() {
               {[
                 { href: '/', label: 'Accueil' },
                 { href: '/products', label: 'Nos Produits' },
-                { href: '/about', label: 'À propos' },
-                { href: '/contact', label: 'Contact' },
-                { href: '/how-it-works', label: 'Comment ça marche ?' }
+            
               ].map((link) => (
                 <li key={link.href}>
                   <Link 
@@ -92,7 +82,7 @@ export default function Footer() {
                 { href: '/privacy', label: 'Politique de confidentialité' },
                 { href: '/shipping', label: 'Livraison & Retours' },
                 { href: '/faq', label: 'FAQ' },
-                { href: '/account', label: 'Mon compte' }
+                
               ].map((link) => (
                 <li key={link.href}>
                   <Link 
@@ -129,12 +119,7 @@ export default function Footer() {
                   >
                     +243 971 676 949
                   </a>
-                  <a 
-                    href="tel:+243993769146"
-                    className="text-sm text-blue-200 hover:text-yellow-400 transition-colors block"
-                  >
-                    +243 993 769 146
-                  </a>
+                 
                 </div>
               </div>
 

@@ -73,7 +73,7 @@ export default function DeliveryInfo() {
               <div className="flex items-start gap-4">
                 <Phone className="w-6 h-6 text-yellow-400 flex-shrink-0" />
                 <div>
-                  <div className="font-bold">Support client</div>
+                  <div className="font-bold">Service client</div>
                   <div className="text-blue-200">Disponible 6j/7</div>
                 </div>
               </div>

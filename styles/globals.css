@@ -2,6 +2,12 @@
 @import "tw-animate-css";
 /* ---break---
  */
+
+ /* app/globals.css */
+html {
+  scroll-behavior: smooth;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 

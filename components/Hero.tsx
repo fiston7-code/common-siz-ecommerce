@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ShoppingBag, Truck, ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 
 
@@ -33,6 +34,18 @@ const slides = [
     badge: { icon: Truck, title: "Livraison 24h", subtitle: "Partout à Kinshasa" }
   }
 ];
+
+
+
+
+const scrollToSection = (id: string) => {
+  const element = document.getElementById(id);
+  element?.scrollIntoView({ 
+    behavior: 'smooth',
+    block: 'start'
+  });
+};
+
 
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -99,7 +112,7 @@ export default function Hero() {
               {slide.description}
             </p>
 
-            <div className="flex flex-wrap gap-4">
+            {/* <div className="flex flex-wrap gap-4">
               <Link
                 href="/products"
                 className="bg-yellow-400 text-blue-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-300 transition flex items-center gap-2 hover:scale-105 transform"
@@ -107,14 +120,51 @@ export default function Hero() {
                 <ShoppingBag className="w-5 h-5" />
                 Voir les produits
               </Link>
+
+          
+
+  
               
-              <Link
-                href="/how-it-works"
-                className="border-2 border-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white/10 transition hover:scale-105 transform"
-              >
-                Comment ça marche ?
-              </Link>
-            </div>
+<motion.div
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+>
+  <a
+    href="#comment-ca-marche"  // ✅ Lien vers l'ancre
+    className="border-2 border-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white/10 transition hover:scale-105 transform"
+  >
+    Comment ça marche ?
+  </a>
+</motion.div> 
+             
+            </div> */}
+
+            <div className="flex flex-wrap gap-4">
+  <motion.div
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+  >
+    <Link
+      href="/products"
+      className="bg-yellow-400 text-blue-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-300 transition flex items-center gap-2"
+    >
+      <ShoppingBag className="w-5 h-5" />
+      Voir les produits
+    </Link>
+  </motion.div>
+
+  <motion.div
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+  >
+    <a
+      href="#comment-ca-marche"
+      className="border-2 border-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white/10 transition inline-flex items-center"
+    >
+      Comment ça marche ?
+    </a>
+  </motion.div>
+</div>
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-6 pt-8">

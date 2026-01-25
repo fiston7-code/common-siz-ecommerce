@@ -198,7 +198,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     </div>
                   </div>
                   <p className="text-xs text-gray-500 text-right">
-                    Frais de livraison calculés à la prochaine étape
+                    Frais de livraison 7000 FC non inclus
                   </p>
                 </div>
 
