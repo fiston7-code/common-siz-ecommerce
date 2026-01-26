@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Package, Plus, Search, Edit2, Trash2, Eye, EyeOff, AlertTriangle } from 'lucide-react';
 import ProductModal from './ProductModal';
+import { ExchangeRateManager } from '@/components/admin/ExchangeRateManager'
 
 interface Product {
   id: string;
@@ -28,6 +29,14 @@ export default function ProductsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
+
+
+  
+
+
+   
+  
+
   const loadProducts = async () => {
     try {
       setLoading(true);
@@ -49,6 +58,7 @@ export default function ProductsPage() {
   useEffect(() => {
     loadProducts();
   }, []);
+
 
   const handleDelete = async (id: string) => {
     if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) return;
@@ -118,6 +128,14 @@ export default function ProductsPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
+                  <div className="max-w-4xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6">Gestion du taux de change</h1>
+      
+      <ExchangeRateManager 
+        mode="edit" 
+        showHistory={true} 
+      />
+    </div>
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <div className="flex items-center justify-between">
@@ -125,11 +143,16 @@ export default function ProductsPage() {
               <div className="p-3 bg-blue-100 rounded-lg">
                 <Package className="w-6 h-6 text-blue-600" />
               </div>
+              
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">Gestion des produits</h1>
                 <p className="text-sm text-gray-500">{products.length} produit(s) au total</p>
               </div>
+
+
+  
             </div>
+   
             <button
               onClick={() => {
                 setEditingProduct(null);

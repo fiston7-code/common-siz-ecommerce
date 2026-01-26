@@ -8,8 +8,8 @@ import Footer from '@/components/Footer';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'E-Commerce App',
-  description: 'Application e-commerce avec gestion FC/USD',
+  title: 'E-commerce App',
+  description: 'Application e-commerce avec paiement à la livraison partout dans la ville de kinshasa.',
 };
 
 export default function RootLayout({
@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang="fr">
       <body className={inter.className}>
         <QueryProvider>
-          {/* ✅ Navbar conditionnelle (masquée sur /admin/*) */}
+          {/* Navbar conditionnelle (masquée sur /admin/*) */}
           <ConditionalNavbar />
           
           <main>{children}</main>

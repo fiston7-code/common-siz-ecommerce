@@ -169,7 +169,7 @@ export default function Hero() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-6 pt-8">
               <div className="text-center lg:text-left">
-                <div className="text-3xl font-bold text-yellow-400">500+</div>
+                <div className="text-3xl font-bold text-yellow-400">100+</div>
                 <div className="text-sm text-blue-200">Produits</div>
               </div>
               <div className="text-center lg:text-left">

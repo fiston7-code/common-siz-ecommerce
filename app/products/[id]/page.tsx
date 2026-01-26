@@ -192,12 +192,6 @@ export default async function ProductDetailPage({
                   <AddToCartButton product={product} />
                 )}
 
-                <button
-                  className="w-full border-2 border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={isOutOfStock}
-                >
-                  ❤️ Ajouter aux favoris
-                </button>
               </div>
             </div>
           </div>
