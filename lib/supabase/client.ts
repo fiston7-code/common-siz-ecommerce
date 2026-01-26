@@ -1,10 +1,16 @@
 
-import { createClient } from '@supabase/supabase-js';
+// lib/client.ts
+import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+// Fonction helper pour les Client Components
+export function createBrowserClient() {
+  return supabase
+}
 
 // Test de connexion
 export async function testConnection() {
@@ -23,3 +29,30 @@ export async function testConnection() {
     return { success: false, error: err }
   }
 }
+
+
+
+// import {  createClient  } from '@supabase/supabase-js';
+
+// const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+// const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+// export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// // Test de connexion
+// export async function testConnection() {
+//   try {
+//     const { data, error } = await supabase
+//       .from('products')
+//       .select('count')
+//       .limit(1)
+    
+//     console.log('✅ Connexion OK')
+//     console.log('Data:', data)
+//     console.log('Error:', error)
+//     return { success: !error, data, error }
+//   } catch (err) {
+//     console.error('❌ Erreur de connexion:', err)
+//     return { success: false, error: err }
+//   }
+// }

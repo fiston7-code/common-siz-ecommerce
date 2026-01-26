@@ -1,11 +1,9 @@
-
-
-
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { OrderNotifications } from '@/components/admin/OrderNotifications'
 
 interface Admin {
   id: string;
@@ -107,7 +105,6 @@ export default function AdminLayout({
       icon: '👥',
       show: admin.role === 'super_admin',
     },
-   
     {
       name: 'Paramètres',
       href: '/admin/settings',
@@ -118,6 +115,9 @@ export default function AdminLayout({
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* ✅ Notifications globales (position fixe) */}
+      <OrderNotifications />
+
       {/* Sidebar */}
       <aside
         className={`fixed top-0 left-0 z-40 h-screen transition-transform ${
@@ -217,84 +217,3 @@ export default function AdminLayout({
     </div>
   );
 }
-
-
-
-
-
-
-
-// 'use client';
-
-// import { usePathname, useRouter } from 'next/navigation';
-// import Link from 'next/link';
-// import { LayoutDashboard, Package, ShoppingCart, LogOut } from 'lucide-react';
-
-// export default function AdminLayout({
-//   children,
-// }: {
-//   children: React.ReactNode;
-// }) {
-//   const pathname = usePathname();
-//   const router = useRouter();
-
-//   const handleLogout = () => {
-//     document.cookie = 'admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
-//     router.push('/admin/login');
-//   };
-
-//   const navigation = [
-//     { name: 'Tableau de bord', href: '/admin/dashboard', icon: LayoutDashboard },
-//     { name: 'Produits', href: '/admin/products', icon: Package },
-//     { name: 'Commandes', href: '/admin/orders', icon: ShoppingCart },
-//   ];
-
-//   return (
-//     <div className="min-h-screen bg-gray-50">
-//       {/* Top Navigation */}
-//       <nav className="bg-white border-b border-gray-200">
-//         <div className="max-w-7xl mx-auto px-4">
-//           <div className="flex items-center justify-between h-16">
-//             <div className="flex items-center gap-8">
-//               <Link href="/admin/dashboard" className="text-xl font-bold text-gray-900">
-//                 Admin Panel
-//               </Link>
-//               <div className="flex gap-1">
-//                 {navigation.map((item) => {
-//                   const Icon = item.icon;
-//                   const isActive = pathname === item.href;
-//                   return (
-//                     <Link
-//                       key={item.name}
-//                       href={item.href}
-//                       className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-//                         isActive
-//                           ? 'bg-blue-50 text-blue-600'
-//                           : 'text-gray-600 hover:bg-gray-100'
-//                       }`}
-//                     >
-//                       <Icon className="w-4 h-4" />
-//                       {item.name}
-//                     </Link>
-//                   );
-//                 })}
-//               </div>
-//             </div>
-//             <button
-//               onClick={handleLogout}
-//               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-//             >
-//               <LogOut className="w-4 h-4" />
-//               Déconnexion
-//             </button>
-//           </div>
-//         </div>
-//       </nav>
-
-//       {/* Content */}
-//       <main>{children}</main>
-//     </div>
-//   );
-// }
-
-
