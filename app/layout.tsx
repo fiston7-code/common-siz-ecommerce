@@ -4,6 +4,7 @@ import { QueryProvider } from '@/providers/query-provider';
 import '../styles/globals.css';
 import ConditionalNavbar from '@/components/ConditionalNavbar';
 import Footer from '@/components/Footer';
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
           <ConditionalNavbar />
           
           <main>{children}</main>
+          <Analytics />
           <footer>
             <Footer />
           </footer>
