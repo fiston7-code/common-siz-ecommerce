@@ -40,8 +40,8 @@ interface ProductCardProps {
 
 const DELIVERY_FEE_FC = 700000 // 7000,00 FC en centimes
 
-export default function CheckoutPage( {product,
-  currency,
+export default function CheckoutPage( {
+  currency
 }: ProductCardProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
