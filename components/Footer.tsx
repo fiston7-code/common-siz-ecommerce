@@ -30,7 +30,7 @@ export default function Footer() {
             {/* Réseaux sociaux */}
             <div className="flex gap-3">
               <a 
-                href="https://facebook.com" 
+                href="https://web.facebook.com/comonsiz" 
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-blue-800 hover:bg-yellow-400 hover:text-blue-900 rounded-full flex items-center justify-center transition-all"
@@ -40,7 +40,7 @@ export default function Footer() {
             
               </a>
               <a 
-                href="https://instagram.com" 
+                href="https://www.instagram.com/comonsiz/" 
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-blue-800 hover:bg-yellow-400 hover:text-blue-900 rounded-full flex items-center justify-center transition-all"
@@ -129,7 +129,7 @@ export default function Footer() {
                   href="mailto:contact@comon-siz.com"
                   className="text-sm text-blue-200 hover:text-yellow-400 transition-colors"
                 >
-                  contact@comon-siz.com
+                  comonsiz0512@gmail.com
                 </a>
               </div>
 
