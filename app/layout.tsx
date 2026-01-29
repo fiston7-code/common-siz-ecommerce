@@ -5,6 +5,7 @@ import '../styles/globals.css';
 import ConditionalNavbar from '@/components/ConditionalNavbar';
 import Footer from '@/components/Footer';
 import { Analytics } from "@vercel/analytics/next"
+import WhatsAppButton from '@/components/WhatsAppButton';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -47,6 +48,7 @@ export default function RootLayout({
         <QueryProvider>
           <ConditionalNavbar />
           <main>{children}</main>
+          <WhatsAppButton />
           <Analytics />
           <footer>
             <Footer />
