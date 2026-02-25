@@ -32,13 +32,11 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
     //   quantity: 1,
     // })
 
-    addItem({
+addItem({
   id: product.id,
   name: product.name,
-  price: product.price,
   price_usd: product.price_usd,
-  image: product.image_url ?? undefined, // 👈 Convertit null en undefined
-  
+  image: product.image_url ?? undefined,
 })
 
     setIsAdding(false)
