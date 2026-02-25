@@ -4,8 +4,11 @@ import { motion } from 'framer-motion';
 
 export default function WhatsAppButton() {
   // ✅ Supprime les espaces pour que le lien fonctionne parfaitement
-  const phoneNumber = "243971676949"; 
-  const message = encodeURIComponent("Bonjour Comon-Siz, j'aimerais avoir plus d'informations.");
+  const phoneNumber = "243828779394"; 
+  const message = encodeURIComponent(
+    "🛒 [SITE WEB] Bonjour Comon-Siz, je viens de visiter votre boutique en ligne et j'aimerais avoir plus d'informations."
+  );
+  // const message = encodeURIComponent("Bonjour Comon-Siz, j'aimerais avoir plus d'informations.");
 
   return (
     <motion.a
@@ -31,8 +34,8 @@ export default function WhatsAppButton() {
 
       {/* Petit badge de notification */}
       <span className="absolute -top-1 -right-1 flex h-3 w-3">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-300 opacity-75"></span>
-        <span className="relative inline-flex rounded-full h-3 w-3 bg-red-300"></span>
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600"></span>
       </span>
     </motion.a>
   );

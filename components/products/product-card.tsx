@@ -136,19 +136,10 @@ export function ProductCard({
 
           {/* Price and Action */}
           <div className="mt-auto pt-3 border-t border-gray-100">
-            {/* Price */}
+            {/* Price - ✅ CORRIGÉ */}
             <div className="mb-3">
               <div className="text-lg font-bold text-gray-900">
-                {formatPrice(
-                  currency === 'FC' ? product.price : product.price_usd,
-                  currency
-                )}
-              </div>
-              <div className="text-xs text-gray-500">
-                {currency === 'FC' 
-                  ? `≈ ${formatPrice(product.price_usd, 'USD')}`
-                  : `≈ ${formatPrice(product.price, 'FC')}`
-                }
+                {formatPrice(product.price_usd, 'USD')}
               </div>
             </div>
 
@@ -169,6 +160,3 @@ export function ProductCard({
     </>
   )
 }
-
-
-
