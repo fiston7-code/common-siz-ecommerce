@@ -36,7 +36,6 @@ export default function ProductQuickView({
     
   id: product.id,
   name: product.name,
-  price: product.price,
   price_usd: product.price_usd,
   image: product.image_url ?? undefined, // 👈 Convertit null en undefined
   
