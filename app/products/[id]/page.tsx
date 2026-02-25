@@ -1,37 +1,31 @@
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
 import Link from 'next/link'
 import { fetchProductById, fetchSimilarProducts } from '@/lib/supabase/api/products'
 import AddToCartButton from '@/components/AddToCartButton'
 import SimilarProducts from '@/components/SimilarProducts'
+import ProductImageGallery from '@/components/ProductImageGallery'
 
-// 🎯 Composant principal - Page détail produit
+// 🎯 Composant principal - Page détail produit (SERVER COMPONENT)
 export default async function ProductDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
-  // 1️⃣ Récupérer l'ID depuis les paramètres
   const { id } = await params
-
-  // 2️⃣ Récupérer le produit (utilise ta fonction fetchProductById)
   const product = await fetchProductById(id)
 
-  // 3️⃣ Si pas de produit → page 404
   if (!product) {
     notFound()
   }
 
-  // 4️⃣ Vérifier le stock
   const isOutOfStock = product.stock_quantity === 0
   const isLowStock = product.stock_quantity > 0 && product.stock_quantity <= (product.stock_threshold || 5)
 
-  // 5️⃣ Récupérer les produits similaires
   const similarProducts = await fetchSimilarProducts(product.id, product.category, 4)
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* 📍 Breadcrumb (fil d'Ariane) */}
+      {/* Breadcrumb */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <nav className="flex items-center gap-2 text-sm text-gray-600">
@@ -48,57 +42,26 @@ export default async function ProductDetailPage({
         </div>
       </div>
 
-      {/* 📦 Contenu principal */}
+      {/* Contenu principal */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
           <div className="grid md:grid-cols-2 gap-8 p-8">
             
-            {/* 🖼️ IMAGE DU PRODUIT */}
-            <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
-              <Image
-                src={product.image_url || '/placeholder.jpg'}
-                alt={product.name}
-                fill
-                className={`object-cover transition-all ${
-                  isOutOfStock ? 'opacity-40 grayscale' : ''
-                }`}
-                priority
-              />
-
-              {/* Badge "SOLD OUT" centré si rupture */}
-              {isOutOfStock && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-red-600 text-white px-8 py-4 rounded-lg text-2xl font-bold shadow-xl transform -rotate-12">
-                    SOLD OUT
-                  </div>
-                </div>
-              )}
-
-              {/* Badge stock coin supérieur droit */}
-              {!isOutOfStock && (
-                <div
-                  className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${
-                    isLowStock
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-green-500 text-white'
-                  }`}
-                >
-                  {isLowStock
-                    ? `Plus que ${product.stock_quantity} en stock`
-                    : 'En stock'}
-                </div>
-              )}
-
-              {isOutOfStock && (
-                <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                  Rupture de stock
-                </div>
-              )}
-            </div>
+            {/* 🖼️ GALERIE D'IMAGES (Client Component) */}
+ <ProductImageGallery
+  images={
+    Array.isArray(product.images) && product.images.length > 0
+      ? product.images.map((img: any) => typeof img === 'string' ? img : img.url) // On extrait l'URL si c'est un objet
+      : product.image_url 
+        ? [product.image_url] 
+        : []
+  }
+  productName={product.name}
+  isOutOfStock={isOutOfStock}
+/>
 
             {/* ℹ️ INFORMATIONS PRODUIT */}
             <div className="flex flex-col">
-              {/* Catégorie et marque */}
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-sm text-gray-500 uppercase tracking-wide">
                   {product.category}
@@ -113,14 +76,26 @@ export default async function ProductDetailPage({
                 )}
               </div>
 
-              {/* Nom du produit */}
               <h1 className="text-3xl font-bold text-gray-900 mb-4">
                 {product.name}
               </h1>
 
-             
+              {/* Badge stock */}
+              {!isOutOfStock && (
+                <div
+                  className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium w-fit mb-4 ${
+                    isLowStock
+                      ? 'bg-orange-100 text-orange-700'
+                      : 'bg-green-100 text-green-700'
+                  }`}
+                >
+                  {isLowStock
+                    ? `⚠️ Plus que ${product.stock_quantity} en stock`
+                    : '✓ En stock'}
+                </div>
+              )}
 
-              {/* 📊 Disponibilité */}
+              {/* Disponibilité */}
               <div className="mb-6">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium text-gray-700">
@@ -144,7 +119,7 @@ export default async function ProductDetailPage({
                 </div>
               </div>
 
-              {/* 📄 Description */}
+              {/* Description */}
               <div className="mb-6">
                 <h2 className="text-lg font-semibold mb-2">Description</h2>
                 <p className="text-gray-700 leading-relaxed">
@@ -152,7 +127,7 @@ export default async function ProductDetailPage({
                 </p>
               </div>
 
-              {/* ⚙️ Spécifications techniques */}
+              {/* Spécifications */}
               {product.specifications &&
                 Object.keys(product.specifications).length > 0 && (
                   <div className="mb-6">
@@ -179,7 +154,7 @@ export default async function ProductDetailPage({
                   </div>
                 )}
 
-              {/* 🛒 Boutons d'action */}
+              {/* Boutons d'action */}
               <div className="mt-auto space-y-3">
                 {isOutOfStock ? (
                   <button
@@ -191,13 +166,12 @@ export default async function ProductDetailPage({
                 ) : (
                   <AddToCartButton product={product} />
                 )}
-
               </div>
             </div>
           </div>
         </div>
 
-        {/* 🔄 Produits similaires */}
+        {/* Produits similaires */}
         {similarProducts.length > 0 && (
           <SimilarProducts products={similarProducts} />
         )}
@@ -206,35 +180,23 @@ export default async function ProductDetailPage({
   )
 }
 
-// 🏷️ Métadonnées dynamiques pour le SEO
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
-  const { id } = await params
-  const product = await fetchProductById(id)
+// Métadonnées
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const product = await fetchProductById(id);
 
-  if (!product) {
-    return {
-      title: 'Produit non trouvé',
-    }
-  }
+  if (!product) return { title: 'Produit non trouvé' };
+
+  // 🛡️ Extraction sécurisée de l'URL pour les réseaux sociaux
+  const ogImage = Array.isArray(product.images) && product.images.length > 0
+    ? (typeof product.images[0] === 'string' ? product.images[0] : product.images[0].url)
+    : product.image_url || '/placeholder.jpg';
 
   return {
     title: `${product.name} - ${product.brand || 'Boutique'}`,
-    description: product.description || `Achetez ${product.name} au meilleur prix`,
+    description: product.description,
     openGraph: {
-      title: product.name,
-      description: product.description,
-      images: [
-        {
-          url: product.image_url || '/placeholder.jpg',
-          width: 1200,
-          height: 630,
-          alt: product.name,
-        },
-      ],
+      images: [{ url: ogImage }],
     },
-  }
+  };
 }

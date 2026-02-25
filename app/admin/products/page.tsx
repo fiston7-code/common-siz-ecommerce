@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Package, Plus, Search, Edit2, Trash2, Eye, EyeOff, AlertTriangle } from 'lucide-react';
+import { Package, Plus, Search, Edit2, Trash2, Eye, EyeOff, AlertTriangle, Image } from 'lucide-react';
 import ProductModal from './ProductModal';
 import { ExchangeRateManager } from '@/components/admin/ExchangeRateManager'
 
@@ -13,6 +13,7 @@ interface Product {
   category: string;
   brand: string;
   specifications: Record<string, unknown>;
+  images: Array<{url: string, is_primary: boolean}>
   image_url: string;
   stock_quantity: number;
   stock_threshold: number;
@@ -197,19 +198,19 @@ export default function ProductsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProducts.map((product) => (
             <div key={product.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-              {/* Image */}
-              <div className="h-48 bg-gray-200 relative">
-                {product.image_url ? (
-                  <img
-                    src={product.image_url}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Package className="w-16 h-16 text-gray-400" />
-                  </div>
-                )}
+  {/* Image */}
+  <div className="h-48 bg-gray-200 relative">
+    {(product.images?.find(img => img.is_primary)?.url || product.images?.[0]?.url || product.image_url) ? (
+      <img 
+      src={product.images?.find(img => img.is_primary)?.url || product.images?.[0]?.url || product.image_url} 
+      alt={product.name} 
+      className="w-full h-full object-cover" 
+    />
+    ) : (
+      <div className="w-full h-full flex items-center justify-center">
+        <Package className="w-16 h-16 text-gray-400" />
+      </div>
+    )}
                 {!product.is_available && (
                   <div className="absolute top-2 right-2 px-2 py-1 bg-red-500 text-white text-xs rounded">
                     Indisponible

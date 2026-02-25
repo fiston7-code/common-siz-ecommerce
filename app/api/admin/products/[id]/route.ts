@@ -16,6 +16,7 @@ interface UpdateProductData {
   brand?: string;
   specifications?: Record<string, unknown>;
   image_url?: string;
+  images?: { url: string; is_primary: boolean }[];// array of image URLs
   stock_quantity?: number;
   stock_threshold?: number;
   is_available?: boolean;
@@ -50,6 +51,7 @@ export async function PATCH(
       brand, 
       specifications, 
       image_url,
+      images, // Array d'images
       stock_quantity,
       stock_threshold,
       is_available
@@ -75,6 +77,7 @@ export async function PATCH(
     if (brand !== undefined) updateData.brand = brand;
     if (specifications !== undefined) updateData.specifications = specifications;
     if (image_url !== undefined) updateData.image_url = image_url;
+    if (images !== undefined) updateData.images = images; // ⬅️ Ajoute cette ligne
     if (stock_quantity !== undefined) updateData.stock_quantity = stock_quantity;
     if (stock_threshold !== undefined) updateData.stock_threshold = stock_threshold;
     if (is_available !== undefined) updateData.is_available = is_available;
@@ -113,43 +116,26 @@ export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
-  const params = await context.params;
-  const productId = params.id;
-
   try {
-    const token = request.cookies.get('admin_token')?.value;
-    
-    if (!token) {
-      return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
-    }
+    const { id } = await context.params;
 
-    const payload = verifyToken(token);
-    if (!payload) {
-      return NextResponse.json({ error: 'Token invalide' }, { status: 401 });
+    // Vérification du token (sécurité)
+    const token = request.cookies.get('admin_token')?.value;
+    if (!token || !verifyToken(token)) {
+      return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
     }
 
     const { error } = await supabase
       .from('products')
       .delete()
-      .eq('id', productId);
+      .eq('id', id);
 
     if (error) {
-      console.error('Erreur suppression produit:', error);
-      return NextResponse.json(
-        { error: 'Erreur lors de la suppression' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({
-      success: true,
-    });
-
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Erreur API:', error);
-    return NextResponse.json(
-      { error: 'Erreur serveur' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
   }
 }

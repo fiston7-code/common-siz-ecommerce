@@ -68,6 +68,7 @@ export async function POST(request: NextRequest) {
       brand, 
       specifications, 
       image_url,
+      images, // Array d'images
       stock_quantity,
       stock_threshold
     } = body;
@@ -89,17 +90,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Créer le produit
+    // Créer le produit avec les images dans la colonne JSONB
     const { data: product, error: productError } = await supabase
       .from('products')
       .insert({
         name,
         description: description || null,
-        price: Math.round(price * 100), // Convertir en centimes
+        price: Math.round(price * 100),
         category,
         brand: brand || null,
         specifications: specifications || null,
         image_url: image_url || null,
+        images: images || [], // ⬅️ Stocke directement dans la colonne JSONB
         stock_quantity: stock_quantity || 0,
         stock_threshold: stock_threshold || 5,
         is_available: true,

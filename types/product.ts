@@ -47,7 +47,8 @@ export interface ProductDB {
   category: ProductCategory           // Catégorie du produit
   brand: string | null                // Marque (ex: "Apple", "Samsung")
   specifications: Record<string, unknown> | null // JSON avec specs techniques
-  image_url: string | null            // URL de l'image
+  image_url: string | null     
+  images?: { url: string; is_primary: boolean }[] | null;       // URL de l'image
   stock_quantity: number              // Quantité en stock
   stock_threshold: number             // Seuil d'alerte stock faible (par défaut 5)
   is_available: boolean               // Disponible à la vente ?
