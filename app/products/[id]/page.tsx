@@ -139,10 +139,10 @@ export default async function ProductDetailPage({
                         ([key, value]) => (
                           <div
                             key={key}
-                            className="flex justify-between border-b border-gray-200 pb-2 last:border-0"
+                            className="flex justify-between border-b border-gray-200 pb-2 gap-8 last:border-0"
                           >
                             <span className="text-gray-600 capitalize">
-                              {key.replace(/_/g, ' ')}
+                              {key.replace(/_/g, ' ')}:
                             </span>
                             <span className="font-medium text-gray-900">
                               {String(value)}
