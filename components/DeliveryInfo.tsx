@@ -34,7 +34,7 @@ export default function DeliveryInfo() {
                     href="tel:+243971676949" 
                     className="text-gray-700 hover:text-blue-900 transition"
                   >
-                    +243 971 676 949
+                     +243 828779394
                   </a>
                 </div>
               </div>

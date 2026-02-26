@@ -117,7 +117,7 @@ export default function Footer() {
                     href="tel:+243971676949"
                     className="text-sm text-blue-200 hover:text-yellow-400 transition-colors block"
                   >
-                    +243 971 676 949
+                    +243 828779394
                   </a>
                  
                 </div>

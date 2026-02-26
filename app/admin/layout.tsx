@@ -105,6 +105,12 @@ export default function AdminLayout({
       icon: '👥',
       show: admin.role === 'super_admin',
     },
+     {
+      name: 'Témoignages',
+      href: '/admin/testimonials',
+      icon: '💬',
+      show: admin.role === 'super_admin',
+    },
     {
       name: 'Paramètres',
       href: '/admin/settings',
