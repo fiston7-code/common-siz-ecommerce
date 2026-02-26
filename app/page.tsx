@@ -4,6 +4,7 @@ import DeliveryInfo from '@/components/DeliveryInfo';
 import HowItWorks from '@/components/HowItWorks';
 import TestimonialSection from '@/components/TestimonialSection'
 import { createClient } from '@supabase/supabase-js';
+export const dynamic = 'force-dynamic'
 
 
 export default async function Home() {
