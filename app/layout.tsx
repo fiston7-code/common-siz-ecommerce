@@ -6,7 +6,7 @@ import ConditionalNavbar from '@/components/ConditionalNavbar';
 import Footer from '@/components/Footer';
 import { Analytics } from "@vercel/analytics/next"
 import WhatsAppButton from '@/components/WhatsAppButton';
-import Script from 'next/script'; // 1. On importe le composant Script
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -45,8 +45,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <head>
-        {/* 2. Ajout du Pixel Meta dans le head */}
+      <body className={inter.className}>
+        {/* ✅ Script Meta Pixel AVANT le noscript */}
         <Script id="fb-pixel" strategy="afterInteractive">
           {`
             !function(f,b,e,v,n,t,s)
@@ -61,9 +61,8 @@ export default function RootLayout({
             fbq('track', 'PageView');
           `}
         </Script>
-      </head>
-      <body className={inter.className}>
-        {/* 3. Balise de secours noscript juste après l'ouverture du body */}
+
+        {/* ✅ Fallback noscript */}
         <noscript>
           <img 
             height="1" 
@@ -73,6 +72,7 @@ export default function RootLayout({
             alt=""
           />
         </noscript>
+
         <QueryProvider>
           <ConditionalNavbar />
           <main>{children}</main>
