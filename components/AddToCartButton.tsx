@@ -24,11 +24,13 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
 
     setIsAdding(true)
 
+    console.log("Données du produit reçu :", product);
+
     try {
       addItem({
         id: product.id,
         name: product.name,
-        price_usd: product.price_usd, // ✅ Uniquement price_usd
+        price_usd: Number(product.price_usd || product.price) || 0, //  Uniquement price_usd
         image: product.image_url ?? undefined,
       })
 

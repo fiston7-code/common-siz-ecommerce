@@ -4,24 +4,34 @@ import { fetchProductById, fetchSimilarProducts } from '@/lib/supabase/api/produ
 import AddToCartButton from '@/components/AddToCartButton'
 import SimilarProducts from '@/components/SimilarProducts'
 import ProductImageGallery from '@/components/ProductImageGallery'
+import { enrichProducts } from '@/lib/currency/product-enricher'
+import { getExchangeRateWithFallback } from '@/lib/currency/exchange-rate'
 
-// 🎯 Composant principal - Page détail produit (SERVER COMPONENT)
+// Composant principal - Page détail produit (SERVER COMPONENT)
 export default async function ProductDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const product = await fetchProductById(id)
+  const rawProduct = await fetchProductById(id)
 
-  if (!product) {
+  if (!rawProduct) {
     notFound()
   }
+
+  // 🔥 ÉTAPE CRUCIALE : On enrichit le produit avec le taux de change
+  // Comme enrichProducts prend un tableau, on lui passe [rawProduct]
+  const { rate } = await getExchangeRateWithFallback()
+  const enrichedProducts = enrichProducts([rawProduct], rate)
+  const product = enrichedProducts[0]
 
   const isOutOfStock = product.stock_quantity === 0
   const isLowStock = product.stock_quantity > 0 && product.stock_quantity <= (product.stock_threshold || 5)
 
-  const similarProducts = await fetchSimilarProducts(product.id, product.category, 4)
+  // On récupère aussi les produits similaires et on les enrichit si nécessaire
+  const rawSimilar = await fetchSimilarProducts(product.id, product.category, 4)
+  const similarProducts = enrichProducts(rawSimilar, rate)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -47,18 +57,18 @@ export default async function ProductDetailPage({
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
           <div className="grid md:grid-cols-2 gap-8 p-8">
             
-            {/* 🖼️ GALERIE D'IMAGES (Client Component) */}
- <ProductImageGallery
-  images={
-    Array.isArray(product.images) && product.images.length > 0
-      ? product.images.map((img: any) => typeof img === 'string' ? img : img.url) // On extrait l'URL si c'est un objet
-      : product.image_url 
-        ? [product.image_url] 
-        : []
-  }
-  productName={product.name}
-  isOutOfStock={isOutOfStock}
-/>
+            {/* 🖼️ GALERIE D'IMAGES */}
+            <ProductImageGallery
+              images={
+                Array.isArray(product.images) && product.images.length > 0
+                  ? product.images.map((img: any) => typeof img === 'string' ? img : img.url)
+                  : product.image_url 
+                    ? [product.image_url] 
+                    : []
+              }
+              productName={product.name}
+              isOutOfStock={isOutOfStock}
+            />
 
             {/* ℹ️ INFORMATIONS PRODUIT */}
             <div className="flex flex-col">
@@ -76,9 +86,16 @@ export default async function ProductDetailPage({
                 )}
               </div>
 
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 {product.name}
               </h1>
+
+              {/* 💰 PRIX EN DOLLARS (Vérifié après enrichissement) */}
+              <div className="mb-6">
+                <span className="text-2xl font-bold text-blue-900">
+                  {product.price_usd?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                </span>
+              </div>
 
               {/* Badge stock */}
               {!isOutOfStock && (
@@ -95,30 +112,6 @@ export default async function ProductDetailPage({
                 </div>
               )}
 
-              {/* Disponibilité */}
-              <div className="mb-6">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-gray-700">
-                    Disponibilité :
-                  </span>
-                  {product.stock_quantity > 0 ? (
-                    <span
-                      className={`text-sm font-semibold ${
-                        isLowStock ? 'text-orange-600' : 'text-green-600'
-                      }`}
-                    >
-                      {product.stock_quantity} unité
-                      {product.stock_quantity > 1 ? 's' : ''} disponible
-                      {product.stock_quantity > 1 ? 's' : ''}
-                    </span>
-                  ) : (
-                    <span className="text-sm text-red-600 font-semibold">
-                      Rupture de stock
-                    </span>
-                  )}
-                </div>
-              </div>
-
               {/* Description */}
               <div className="mb-6">
                 <h2 className="text-lg font-semibold mb-2">Description</h2>
@@ -127,7 +120,7 @@ export default async function ProductDetailPage({
                 </p>
               </div>
 
-              {/* Spécifications */}
+               {/* Spécifications */}
               {product.specifications &&
                 Object.keys(product.specifications).length > 0 && (
                   <div className="mb-6">
@@ -154,6 +147,7 @@ export default async function ProductDetailPage({
                   </div>
                 )}
 
+
               {/* Boutons d'action */}
               <div className="mt-auto space-y-3">
                 {isOutOfStock ? (
@@ -164,6 +158,7 @@ export default async function ProductDetailPage({
                     Produit indisponible
                   </button>
                 ) : (
+                  /* 🔥 Ici le produit est maintenant enrichi avec price_usd */
                   <AddToCartButton product={product} />
                 )}
               </div>
@@ -180,23 +175,201 @@ export default async function ProductDetailPage({
   )
 }
 
-// Métadonnées
+// Métadonnées (Garder fetchProductById pour la rapidité)
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const product = await fetchProductById(id);
-
   if (!product) return { title: 'Produit non trouvé' };
 
-  // 🛡️ Extraction sécurisée de l'URL pour les réseaux sociaux
   const ogImage = Array.isArray(product.images) && product.images.length > 0
     ? (typeof product.images[0] === 'string' ? product.images[0] : product.images[0].url)
     : product.image_url || '/placeholder.jpg';
 
   return {
-    title: `${product.name} - ${product.brand || 'Boutique'}`,
+    title: `${product.name} - ${product.brand || 'Comon-siz'}`,
     description: product.description,
-    openGraph: {
-      images: [{ url: ogImage }],
-    },
+    openGraph: { images: [{ url: ogImage }] },
   };
 }
+
+
+
+
+
+// import { notFound } from 'next/navigation'
+// import Link from 'next/link'
+// import { fetchProductById, fetchSimilarProducts } from '@/lib/supabase/api/products'
+// import AddToCartButton from '@/components/AddToCartButton'
+// import SimilarProducts from '@/components/SimilarProducts'
+// import ProductImageGallery from '@/components/ProductImageGallery'
+
+
+// // 🎯 Composant principal - Page détail produit (SERVER COMPONENT)
+// export default async function ProductDetailPage({
+//   params,
+// }: {
+//   params: Promise<{ id: string }>
+// }) {
+//   const { id } = await params
+//   const product = await fetchProductById(id)
+
+//   if (!product) {
+//     notFound()
+//   }
+
+//   const isOutOfStock = product.stock_quantity === 0
+//   const isLowStock = product.stock_quantity > 0 && product.stock_quantity <= (product.stock_threshold || 5)
+
+//   const similarProducts = await fetchSimilarProducts(product.id, product.category, 4)
+
+//   return (
+//     <div className="min-h-screen bg-gray-50">
+//       {/* Breadcrumb */}
+//       <div className="bg-white border-b">
+//         <div className="max-w-7xl mx-auto px-4 py-3">
+//           <nav className="flex items-center gap-2 text-sm text-gray-600">
+//             <Link href="/" className="hover:text-gray-900 transition">
+//               Accueil
+//             </Link>
+//             <span>/</span>
+//             <Link href="/products" className="hover:text-gray-900 transition">
+//               Produits
+//             </Link>
+//             <span>/</span>
+//             <span className="text-gray-900 font-medium">{product.name}</span>
+//           </nav>
+//         </div>
+//       </div>
+
+//       {/* Contenu principal */}
+//       <div className="max-w-7xl mx-auto px-4 py-8">
+//         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+//           <div className="grid md:grid-cols-2 gap-8 p-8">
+            
+//             {/* 🖼️ GALERIE D'IMAGES (Client Component) */}
+//  <ProductImageGallery
+//   images={
+//     Array.isArray(product.images) && product.images.length > 0
+//       ? product.images.map((img: any) => typeof img === 'string' ? img : img.url) // On extrait l'URL si c'est un objet
+//       : product.image_url 
+//         ? [product.image_url] 
+//         : []
+//   }
+//   productName={product.name}
+//   isOutOfStock={isOutOfStock}
+// />
+
+//             {/* ℹ️ INFORMATIONS PRODUIT */}
+//             <div className="flex flex-col">
+//               <div className="flex items-center gap-2 mb-2">
+//                 <span className="text-sm text-gray-500 uppercase tracking-wide">
+//                   {product.category}
+//                 </span>
+//                 {product.brand && (
+//                   <>
+//                     <span className="text-gray-300">•</span>
+//                     <span className="text-sm text-gray-700 font-medium">
+//                       {product.brand}
+//                     </span>
+//                   </>
+//                 )}
+//               </div>
+
+//               <h1 className="text-3xl font-bold text-gray-900 mb-4">
+//                 {product.name}
+//               </h1>
+
+//               {/* Badge stock */}
+//               {!isOutOfStock && (
+//                 <div
+//                   className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium w-fit mb-4 ${
+//                     isLowStock
+//                       ? 'bg-orange-100 text-orange-700'
+//                       : 'bg-green-100 text-green-700'
+//                   }`}
+//                 >
+//                   {isLowStock
+//                     ? `⚠️ Plus que ${product.stock_quantity} en stock`
+//                     : '✓ En stock'}
+//                 </div>
+//               )}
+
+//               {/* Disponibilité */}
+//               <div className="mb-6">
+//                 <div className="flex items-center gap-2">
+//                   <span className="text-sm font-medium text-gray-700">
+//                     Disponibilité :
+//                   </span>
+//                   {product.stock_quantity > 0 ? (
+//                     <span
+//                       className={`text-sm font-semibold ${
+//                         isLowStock ? 'text-orange-600' : 'text-green-600'
+//                       }`}
+//                     >
+//                       {product.stock_quantity} unité
+//                       {product.stock_quantity > 1 ? 's' : ''} disponible
+//                       {product.stock_quantity > 1 ? 's' : ''}
+//                     </span>
+//                   ) : (
+//                     <span className="text-sm text-red-600 font-semibold">
+//                       Rupture de stock
+//                     </span>
+//                   )}
+//                 </div>
+//               </div>
+
+//               {/* Description */}
+//               <div className="mb-6">
+//                 <h2 className="text-lg font-semibold mb-2">Description</h2>
+//                 <p className="text-gray-700 leading-relaxed">
+//                   {product.description}
+//                 </p>
+//               </div>
+
+             
+//               {/* Boutons d'action */}
+//               <div className="mt-auto space-y-3">
+//                 {isOutOfStock ? (
+//                   <button
+//                     disabled
+//                     className="w-full bg-gray-300 text-gray-500 py-3 rounded-lg font-semibold cursor-not-allowed"
+//                   >
+//                     Produit indisponible
+//                   </button>
+//                 ) : (
+//                   <AddToCartButton product={product} />
+//                 )}
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Produits similaires */}
+//         {similarProducts.length > 0 && (
+//           <SimilarProducts products={similarProducts} />
+//         )}
+//       </div>
+//     </div>
+//   )
+// }
+
+// // Métadonnées
+// export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+//   const { id } = await params;
+//   const product = await fetchProductById(id);
+
+//   if (!product) return { title: 'Produit non trouvé' };
+
+//   // 🛡️ Extraction sécurisée de l'URL pour les réseaux sociaux
+//   const ogImage = Array.isArray(product.images) && product.images.length > 0
+//     ? (typeof product.images[0] === 'string' ? product.images[0] : product.images[0].url)
+//     : product.image_url || '/placeholder.jpg';
+
+//   return {
+//     title: `${product.name} - ${product.brand || 'Boutique'}`,
+//     description: product.description,
+//     openGraph: {
+//       images: [{ url: ogImage }],
+//     },
+//   };
+// }

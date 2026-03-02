@@ -37,7 +37,7 @@ export default function PremiumNavbar() {
   const announcements = [
     "✨ Livraison OFFERTE dès 100$ d'achat à Gombe, Limete et Bandal",
     "🚚 Livraison express en 24h dans toutes les communes de Kinshasa",
-    "📱 Suivez votre commande en direct sur WhatsApp (+243 971 676 949)",
+    "📱 Suivez votre commande en direct sur WhatsApp (+243 828779394)",
     "🤝 Paiement à la livraison : Payez seulement après avoir vérifié le colis",
     "🔥 Promo Flash : -10% sur les Tablettes jusqu'à la fin de la semaine"
   ]
