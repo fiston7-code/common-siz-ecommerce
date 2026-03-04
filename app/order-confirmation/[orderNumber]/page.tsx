@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { CheckCircle2 } from 'lucide-react'
 import { formatPrice } from '@/lib/currency'
+import { getExchangeRateValue } from '@/lib/currency/exchange-rate' // Import du taux
+import { convertFcToUsd } from '@/lib/currency/converter'     // Import du convertisseur
 
 interface OrderItem {
   id: string
@@ -28,6 +30,9 @@ interface Order {
   order_items: OrderItem[]
 }
 
+
+
+
 export default async function OrderConfirmationPage({
   params, 
 }: {
@@ -35,33 +40,25 @@ export default async function OrderConfirmationPage({
 }) {
   const { orderNumber } = await params
 
+  // 1. Récupérer la commande
   const { data: order, error } = await supabase
     .from('orders')
-    .select(`
-      *,
-      order_items (
-        *
-      )
-    `)
+    .select(`*, order_items (*)`)
     .eq('order_number', orderNumber)
     .single()
 
-  if (error || !order) {
-    notFound()
-  }
+  if (error || !order) notFound()
 
-  const typedOrder = order as Order
+  // 2. Récupérer le taux de change actuel pour la conversion inverse
+  const rate = await getExchangeRateValue()
 
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="max-w-2xl mx-auto">
-        {/* Success Header */}
         <div className="text-center mb-8">
           <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
           <h1 className="text-3xl font-bold mb-2">Commande confirmée !</h1>
-          <p className="text-muted-foreground">
-            Merci pour votre commande. Nous vous contacterons bientôt.
-          </p>
+          <p className="text-muted-foreground">Merci pour votre commande. Nous vous contacterons bientôt.</p>
         </div>
 
         <Card>
@@ -69,78 +66,74 @@ export default async function OrderConfirmationPage({
             <CardTitle>Détails de la commande</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Order Number */}
             <div>
               <p className="text-sm text-muted-foreground">Numéro de commande</p>
-              <p className="font-mono font-bold text-lg">{typedOrder.order_number}</p>
+              <p className="font-mono font-bold text-lg">{order.order_number}</p>
             </div>
 
-            {/* Products List */}
+            {/* Liste des Produits avec CONVERSION */}
             <div>
               <p className="text-sm text-muted-foreground mb-2">Produits commandés</p>
               <div className="space-y-2">
-                {typedOrder.order_items.map((item) => (
-                  <div key={item.id} className="flex justify-between items-start">
-                    <span className="text-gray-900">
-                      {item.product_name} × {item.quantity}
-                    </span>
-                    <span className="font-medium">
-                      {formatPrice(item.total_price, 'USD')}
-                    </span>
-                  </div>
-                ))}
+                {order.order_items.map((item: any) => {
+                  // Conversion du total ligne : Centimes FC -> USD
+                  const priceInUsd = convertFcToUsd(item.total_price, rate)
+                  
+                  return (
+                    <div key={item.id} className="flex justify-between items-start">
+                      <span className="text-gray-900">{item.product_name} × {item.quantity}</span>
+                      <span className="font-medium">{formatPrice(priceInUsd, 'USD')}</span>
+                    </div>
+                  )
+                })}
               </div>
             </div>
 
-            {/* Totals */}
+            {/* Totaux avec CONVERSION */}
             <div className="border-t pt-4">
               <div className="flex justify-between mb-2">
                 <span className="text-muted-foreground">Sous-total</span>
                 <span className="font-medium">
-                  {formatPrice(typedOrder.subtotal, 'USD')}
+                  {formatPrice(convertFcToUsd(order.subtotal, rate), 'USD')}
                 </span>
               </div>
               <div className="flex justify-between mb-2">
                 <span className="text-muted-foreground">Livraison</span>
                 <span className="font-medium">
-                  {formatPrice(typedOrder.shipping_cost, 'USD')}
+                  {formatPrice(convertFcToUsd(order.shipping_cost, rate), 'USD')}
                 </span>
               </div>
-              <div className="flex justify-between font-bold text-lg border-t pt-2 mt-2">
-                <span>Total</span>
-                <span className="text-2xl text-blue-900">
-                  {formatPrice(typedOrder.total, 'USD')}
-                </span>
+              
+              <div className="flex justify-between font-bold text-lg border-t pt-2 mt-2 bg-blue-50 p-2 rounded">
+                <div className="flex flex-col">
+                  <span>Total</span>
+                  <span className="text-[10px] text-blue-600 font-normal">Taux indicatif: 1$ = {rate} FC</span>
+                </div>
+                <div className="text-right">
+                  <p className="text-2xl text-blue-900">
+                    {formatPrice(convertFcToUsd(order.total, rate), 'USD')}
+                  </p>
+                  {/* Optionnel: Afficher aussi le montant exact en FC pour le livreur */}
+                  <p className="text-sm text-gray-500">{formatPrice(order.total, 'FC')}</p>
+                </div>
               </div>
             </div>
 
-            {/* Delivery Address */}
+            {/* Adresse et Boutons ... (le reste du code est identique) */}
             <div className="bg-muted p-4 rounded-lg">
               <p className="font-medium mb-2">Adresse de livraison</p>
               <p className="text-sm">
-                {typedOrder.customer_name}<br />
-                {typedOrder.delivery_avenue}<br />
-                {typedOrder.delivery_quartier}, {typedOrder.delivery_commune}<br />
-                {typedOrder.customer_phone}
+                {order.customer_name}<br />
+                {order.delivery_avenue}<br />
+                {order.delivery_quartier}, {order.delivery_commune}<br />
+                {order.customer_phone}
               </p>
             </div>
 
-            {/* Action Buttons */}
             <div className="space-y-2">
-              <Button asChild className="w-full">
+              <Button asChild className="w-full bg-blue-900">
                 <Link href="/products">Continuer mes achats</Link>
               </Button>
-              <Button asChild variant="outline" className="w-full">
-                <Link href="/">Retour à l&apos;accueil</Link>
-              </Button>
-            </div>
-
-            {/* Payment Info */}
-            <div className="bg-muted p-4 rounded-lg text-sm">
-              <p className="font-medium mb-1">Paiement à la livraison</p>
-              <p className="text-muted-foreground text-xs">
-                Payez en espèces lors de la réception de votre commande
-              </p>
             </div>
           </CardContent>
         </Card>
