@@ -5,9 +5,12 @@ import HowItWorks from '@/components/HowItWorks';
 import TestimonialSection from '@/components/TestimonialSection'
 import { createClient } from '@supabase/supabase-js';
 export const dynamic = 'force-dynamic'
+import { redirect } from 'next/navigation'
 
 
 export default async function Home() {
+  redirect('/products')
+  
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -30,4 +33,5 @@ export default async function Home() {
       <TestimonialSection testimonials={testimonials || []} />
     </main>
   );
+  
 }
