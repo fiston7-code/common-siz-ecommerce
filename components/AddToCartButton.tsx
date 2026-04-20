@@ -63,7 +63,7 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
       ) : showSuccess ? (
         <>
           <Check className="w-4 h-4" />
-          Ajouté au panier !
+          Acheter maintenant
         </>
       ) : isOutOfStock ? (
         <>
@@ -73,7 +73,7 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
       ) : (
         <>
           <ShoppingCart className="w-4 h-4" />
-          Ajouter au panier
+          Acheter maintenant
         </>
       )}
     </button>
